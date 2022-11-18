@@ -16,21 +16,28 @@ tokenizer = pickle.load(open('tokenizer1.pkl', 'rb'))
 
 
 def Predict_Next_Words(model, tokenizer, text):
-    for i in range(3):
-        sequence = tokenizer.texts_to_sequences([text])[0]
-        sequence = np.array(sequence)
+    sequence = tokenizer.texts_to_sequences([text])[0]
+    sequence = np.array(sequence)
 
-        preds = model.predict_classes(sequence)
-#         print(preds)
-        predicted_word = ""
+    preds = model.predict(sequence)
+    counter = 0
+    index = 0
+    highest_prob = preds[0][0]
+    for k in preds:
+        for j in k:
+            if j > highest_prob:
+                highest_prob = j
+                index = counter
+            else:
+                counter += 1
 
-        for key, value in tokenizer.word_index.items():
-            if value == preds:
-                predicted_word = key
-                break
+    predicted_word = ""
 
-        print(predicted_word)
-        return predicted_word
+    for key, value in tokenizer.word_index.items():
+        if value == index:
+            predicted_word = key
+
+    return predicted_word
 
 
 @app.route('/predict', methods=['POST'])

@@ -8,14 +8,21 @@ from flask import (
     request
 )
 
+import s3fs
+fs = s3fs.S3FileSystem(anon=True)
+
+
 app = Flask(__name__)
 app.config["DEBUG"] = True
 
-model = load_model('nextword1.h5')
-tokenizer = pickle.load(open('tokenizer1.pkl', 'rb'))
+# model = load_model('ml-objs/nextword1.h5')
+with fs.open('ml-objs/nextword1.h5', 'rb') as handle:
+    model = load_model(handle)
+with fs.open('ml-objs/tokenizer.pkl', 'rb') as handle:
+    tokenizer = pickle.load(handle)
 
 
-def Predict_Next_Words(model, tokenizer, text):
+def predictor(model, tokenizer, text):
     sequence = tokenizer.texts_to_sequences([text])[0]
     sequence = np.array(sequence)
 
@@ -51,7 +58,7 @@ def predict():
 
     text = ''.join(text)
 
-    prediction = Predict_Next_Words(model, tokenizer, text)
+    prediction = predictor(model, tokenizer, text)
 
     return json.dumps(prediction)
 

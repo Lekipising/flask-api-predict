@@ -3,3 +3,4 @@ numpy
 tensorflow
 keras
 s3fs
+boto3

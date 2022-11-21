@@ -1,6 +1,8 @@
+import os
 import pickle
 import numpy as np
 from tensorflow.keras.models import load_model
+import boto3
 import json
 
 from flask import (
@@ -16,10 +18,17 @@ app = Flask(__name__)
 app.config["DEBUG"] = True
 
 # model = load_model('ml-objs/nextword1.h5')
-with fs.open('ml-objs/nextword1.h5', 'rb') as handle:
-    model = load_model(handle)
-with fs.open('ml-objs/tokenizer.pkl', 'rb') as handle:
-    tokenizer = pickle.load(handle)
+client = boto3.client('s3', aws_access_key_id=os.AWS_ACCESS_KEY,
+                      aws_secret_access_key=os.AWS_SECRET_KEY,
+                      region_name="us-west-2")
+client.download_file("ml-objs",
+                     'model.h5',
+                     'model.h5')
+client.download_file("ml-objs",
+                     'tokenizer1.pkl',
+                     'tokenizer1.pkl')
+model = load_model('model.h5')
+tokenizer = pickle.load(open('tokenizer1.pkl', 'rb'))
 
 
 def predictor(model, tokenizer, text):

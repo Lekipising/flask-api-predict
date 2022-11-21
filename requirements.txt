@@ -1,6 +1,6 @@
+tensorflow==2.8.0
 Flask
 numpy
-tensorflow==2.7.0
 keras
 s3fs
 boto3

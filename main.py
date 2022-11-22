@@ -71,5 +71,12 @@ def predict():
 
     return json.dumps(prediction)
 
+# defalut route
+
+
+@app.route('/', methods=['GET'])
+def home():
+    return "<h1>Next Word Predictor</h1>"
+
 
 app.run()
